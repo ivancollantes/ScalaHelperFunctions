@@ -1,6 +1,6 @@
 object HelperFunctions {
 
-  /*
+  /**
    * foldLeft takes 2 arguments:
        ** an initial value (in this case an empty list declared as "List[Int]()") for the result and
        ** a pre-defined combining operation that, again, takes 2 arguments:
