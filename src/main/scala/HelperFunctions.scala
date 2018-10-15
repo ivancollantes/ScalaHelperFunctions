@@ -1,3 +1,5 @@
+import scala.math._
+
 object HelperFunctions {
 
   /*
@@ -11,9 +13,15 @@ object HelperFunctions {
    */
   def reverseList(arr: List[Int]): List[Int] = arr.foldLeft(List[Int]()) { (result, element) => element :: result }
 
-  def sumOdd(arr: List[Int]): Int = arr.filter(_ % 2 != 0).sum
+  def sumOddValuesOfList(arr: List[Int]): Int = arr.filter(_ % 2 != 0).sum
 
-  def countNumberOfElements(arr: List[Int]): Int = arr.foldLeft(0) { (count, _) => count + 1}
+  def countNumberOfElementsInList(arr: List[Int]): Int = arr.foldLeft(0) { (count, _) => count + 1}
 
   def getAbsoluteValues(arr: List[Int]): List[Int] = arr.map(_.abs)
+
+  def computeFactorial(number: Int): Int = (1 to number).product
+
+  // exponential function -> e^x = 1 + x + x^2/2! + x^3/3! + x^4/4! ...
+  def computeExponentialFunction(value: Double, terms: Int): Double =
+    (1 to terms).foldLeft(1.0) { (result, term) => result + pow(value, term)/computeFactorial(term) }
 }
