@@ -32,4 +32,24 @@ object HelperFunctions {
       (result: Double, coefficientPair: (Int, Int)) => result + coefficientPair._1*pow(x, powers(coefficientPair._2))
     }
   }
+
+  def computeAreaOfCircleObtainedRotatingValueOfFunction(coefficients: List[Int], powers: List[Int], x: Double): Double = {
+    Pi*pow(computeValueOfFunction(coefficients, powers, x), 2)
+  }
+
+  // https://www.math.ucdavis.edu/~kouba/CalcTwoDIRECTORY/defintdirectory/
+  // to use with computeValueOfFunction or computeAreaOfCircleObtainedRotatingValueOfFunction as "func"
+  def computeAreaUnderFunction(func: (List[Int], List[Int], Double)=>Double,
+                               upperLimit: Int,
+                               lowerLimit: Int,
+                               coefficients: List[Int],
+                               powers: List[Int],
+                               fixedSubIntervalLength: Double): Double = {
+    val n: Int = (upperLimit - lowerLimit)/fixedSubIntervalLength.toInt
+    (1 to n).foldLeft(0.0) { (result: Double, i: Int) => {
+      val deltaXi: Double = (upperLimit - lowerLimit)/n
+      val Ci: Double = lowerLimit + deltaXi*i
+      result + func(coefficients, powers, Ci)*deltaXi
+    }}
+  }
 }
