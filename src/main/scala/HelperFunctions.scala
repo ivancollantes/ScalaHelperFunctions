@@ -24,4 +24,12 @@ object HelperFunctions {
   // exponential function -> e^x = 1 + x + x^2/2! + x^3/3! + x^4/4! ...
   def computeExponentialFunction(value: Double, terms: Int): Double =
     (1 to terms).foldLeft(1.0) { (result, term) => result + pow(value, term)/computeFactorial(term) }
+
+  // f(x) = a1*x^b1 + a2*x^b2 + ... + an*x^bn
+  // coefficientPair = (coefficient, index)
+  def computeValueOfFunction(coefficients: List[Int], powers: List[Int], x: Double): Double = {
+    coefficients.zipWithIndex.foldLeft(0.0) {
+      (result: Double, coefficientPair: (Int, Int)) => result + coefficientPair._1*pow(x, powers(coefficientPair._2))
+    }
+  }
 }
