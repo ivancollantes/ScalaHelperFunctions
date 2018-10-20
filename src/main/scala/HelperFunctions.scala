@@ -76,4 +76,52 @@ object HelperFunctions {
     }
     innerFactorial(5, 1)
   }
+
+  /*
+   * Functional Programming Principles in Scala, week 1
+   */
+  def getNumberInPascalTrianglePosition(column: Int, row: Int): Int =
+    if(column == 0 || column == row) 1
+    else getNumberInPascalTrianglePosition(column - 1, row - 1) + getNumberInPascalTrianglePosition(column, row - 1)
+
+  /*
+   * Functional Programming Principles in Scala, week 1
+   */
+  def isThereBracketBalance(chars: List[Char]): Boolean = {
+
+    @tailrec
+    def innerIsThereBracketBalance(remainingChars: List[Char], accumulator: Int): Boolean = {
+
+      def updateAccumulator(char: Char, accumulator: Int): Int =
+        if(char == '(') accumulator + 1
+        else if (char == ')') accumulator - 1
+        else accumulator
+
+      val currentAccumulator: Int = updateAccumulator(remainingChars.head, accumulator)
+
+      val balance: Boolean = if(currentAccumulator == 0) true else false
+
+      if(currentAccumulator < 0) false
+      else if (remainingChars.tail.isEmpty) balance
+      else innerIsThereBracketBalance(remainingChars.tail, currentAccumulator )
+    }
+
+    innerIsThereBracketBalance(chars, 0)
+  }
+
+  /*
+   * Functional Programming Principles in Scala, week 1
+   */
+  def getNumberOfWaysToGiveChange(money: Int, coins: List[Int]): Int = {
+
+    def innerGetNumberOfWaysToGiveChange(coins: List[Int], numberOfCoins: Int, money: Int): Int = {
+      if (money < 0) 0
+      else if (money == 0) 1
+      else if (numberOfCoins == 0) 0
+      else innerGetNumberOfWaysToGiveChange(coins, numberOfCoins - 1, money) +
+           innerGetNumberOfWaysToGiveChange(coins, numberOfCoins, money - coins(numberOfCoins-1))
+    }
+
+    innerGetNumberOfWaysToGiveChange(coins, coins.length, money)
+  }
 }
