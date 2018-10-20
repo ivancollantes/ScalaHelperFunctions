@@ -1,6 +1,11 @@
+import scala.annotation.tailrec
 import scala.math._
 
 object HelperFunctions {
+
+  def replicateNumber(number:Int, repetitions:Int): List[Int] = List.fill(repetitions)(number)
+
+  def listReplication(num:Int, arr:List[Int]): List[Int] = arr.flatMap(replicateNumber(_, num))
 
   /*
    * foldLeft takes 2 arguments:
@@ -51,5 +56,24 @@ object HelperFunctions {
       val Ci: Double = lowerLimit + deltaXi*i
       result + func(coefficients, powers, Ci)*deltaXi
     }}
+  }
+
+  def sqrtCustom(x: Double) = {
+    def isGoodEnough(guess: Double, x: Double) = abs(guess * guess - x)/x < 0.01
+    def improve(guess: Double, x: Double) =(guess + x / guess) / 2
+    def sqrtIter(guess: Double, x: Double): Double =
+      if (isGoodEnough(guess, x)) guess
+      else sqrtIter(improve(guess, x), x)
+    sqrtIter(1.0, x)
+  }
+
+  def absCustom(x:Double) = if (x < 0) -x else x
+
+  def factorialCustom(number: Int): Int = {
+    @tailrec
+    def innerFactorial(number: Int, accumulated: Int): Int = {
+      if(number == 0) accumulated else innerFactorial(number - 1, number * accumulated)
+    }
+    innerFactorial(5, 1)
   }
 }
