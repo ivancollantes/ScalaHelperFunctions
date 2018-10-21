@@ -3,9 +3,9 @@ import scala.math._
 
 object HelperFunctions {
 
-  def replicateNumber(number:Int, repetitions:Int): List[Int] = List.fill(repetitions)(number)
+  def replicateNumber(number: Int, repetitions: Int): List[Int] = List.fill(repetitions)(number)
 
-  def listReplication(num:Int, arr:List[Int]): List[Int] = arr.flatMap(replicateNumber(_, num))
+  def listReplication(num: Int, arr: List[Int]): List[Int] = arr.flatMap(replicateNumber(_, num))
 
   /*
    * foldLeft takes 2 arguments:
@@ -24,13 +24,13 @@ object HelperFunctions {
 
   def getAbsoluteValues(arr: List[Int]): List[Int] = arr.map(_.abs)
 
-  def computeFactorial(number: Int): Int = (1 to number).product
+  def computeFactorial(x: Int): Int = (1 to x).product
 
   /*
-   * exponential function -> e^x = 1 + x + x^2/2! + x^3/3! + x^4/4! ...
+   * Exponential function -> f(x) = e^x = 1 + x + x^2/2! + x^3/3! + x^4/4! ...
    */
-  def computeExponentialFunction(value: Double, terms: Int): Double =
-    (1 to terms).foldLeft(1.0) { (result, term) => result + pow(value, term)/computeFactorial(term) }
+  def computeExponentialFunction(x: Double, terms: Int): Double =
+    (1 to terms).foldLeft(1.0) { (result, term) => result + pow(x, term)/computeFactorial(term) }
 
   /*
    * f(x) = a1*x^b1 + a2*x^b2 + ... + an*x^bn
@@ -50,7 +50,7 @@ object HelperFunctions {
    * https://www.math.ucdavis.edu/~kouba/CalcTwoDIRECTORY/defintdirectory/
    * to use with computeValueOfFunction or computeAreaOfCircleObtainedRotatingValueOfFunction as "func"
    */
-  def computeAreaUnderFunction(func: (List[Int], List[Int], Double)=>Double,
+  def computeAreaUnderFunction(f: (List[Int], List[Int], Double) => Double,
                                upperLimit: Int,
                                lowerLimit: Int,
                                coefficients: List[Int],
@@ -60,7 +60,7 @@ object HelperFunctions {
     (1 to n).foldLeft(0.0) { (result: Double, i: Int) => {
       val deltaXi: Double = (upperLimit - lowerLimit)/n
       val Ci: Double = lowerLimit + deltaXi*i
-      result + func(coefficients, powers, Ci)*deltaXi
+      result + f(coefficients, powers, Ci)*deltaXi
     }}
   }
 
@@ -68,15 +68,15 @@ object HelperFunctions {
    * Functional Programming Principles in Scala, week 1
    */
   def sqrtCustom(x: Double) = {
-    def isGoodEnough(guess: Double, x: Double) = abs(guess * guess - x)/x < 0.01
-    def improve(guess: Double, x: Double) =(guess + x / guess) / 2
+    def isGoodEnough(guess: Double, x: Double) = abs(guess * guess - x)/x < 0.001
+    def improve(guess: Double, x: Double) = (guess + x / guess) / 2
     def sqrtIter(guess: Double, x: Double): Double =
       if (isGoodEnough(guess, x)) guess
       else sqrtIter(improve(guess, x), x)
     sqrtIter(1.0, x)
   }
 
-  def absCustom(x:Double) = if (x < 0) -x else x
+  def absCustom(x: Double) = if (x < 0) -x else x
 
   def factorialCustom(number: Int): Int = {
     @tailrec
@@ -161,5 +161,17 @@ object HelperFunctions {
 
   def productWithMapReduce(f: Int => Int)(a: Int, b: Int): Int = mapReduce(f, (x, y) => x * y, 1)(a, b)
   def sumWithMapReduce(f: Int => Int)(a: Int, b: Int): Int = mapReduce(f, (x, y) => x + y, 0)(a, b)
-  def factorialWithMapReduce(number: Int): Int = mapReduce(x => x, (x, y) => x * y, 1)(1, number)
+  def factorialWithMapReduce(x: Int): Int = mapReduce(x => x, (x, y) => x * y, 1)(1, x)
+
+  def getFixedPointOfFunction(f: Double => Double)(firstGuess: Double): Double = {
+    val tolerance: Double = 0.001
+    def isCloseEnough(guess: Double, x: Double) = abs(guess * guess - x)/x < tolerance
+    @tailrec
+    def inner(guess: Double): Double = {
+      val next = f(guess)
+      if(isCloseEnough(guess, next)) next
+      else inner(next)
+    }
+    inner(firstGuess)
+  }
 }

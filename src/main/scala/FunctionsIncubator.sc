@@ -1,44 +1,25 @@
 import scala.annotation.tailrec
+import scala.math.abs
 
+def getFixedPointOfFunction(f: Double => Double)(firstGuess: Double): Double = {
+  val tolerance: Double = 0.001
 
-def product(f: Int => Int)(a: Int, b: Int): Int = {
-  if(a > b) 1
-  else f(a) * product(f)(a + 1, b)
-}
+  def isCloseEnough(guess: Double, x: Double) = abs(guess * guess - x) / x < tolerance
 
-product(x => x)(1, 5)
-
-def factorialCustom(number: Int): Int = {
   @tailrec
-  def inner(number: Int, accumulated: Int): Int = {
-    if(number == 0) accumulated else inner(number - 1, number * accumulated)
+  def inner(guess: Double): Double = {
+    val next = f(guess)
+    if (isCloseEnough(guess, next)) next
+    else inner(next)
   }
-  inner(number, 1)
+
+  inner(firstGuess)
 }
 
-def factorialCustomCurrying(number: Int): Int = {
-  def product(f: Int => Int)(a: Int, b: Int): Int = {
-    if(a > b) 1
-    else f(a) * product(f)(a + 1, b)
-  }
-  product(x => x)(1, number)
+def averageDamp(f: Double => Double)(x: Double): Double = (x + f(x))/2
+
+getFixedPointOfFunction(x => 1 + x/2)(1)
+
+def sqrt(x: Double): Double = {
+
 }
-
-factorialCustom(7)
-factorialCustomCurrying(5)
-
-def general(f: Int => Int)(a: Int, b: Int): Int = {
-  if(a > b) 1
-  else f(a) * general(f)(a + 1, b)
-}
-
-def mapReduce(f: Int => Int, combine: (Int, Int) => Int, zero: Int)(a: Int, b: Int): Int = {
-  if(a > b) zero
-  else combine(f(a), mapReduce(f, combine, zero)(a + 1, b))
-}
-
-def productWithMapReduce(f: Int => Int)(a: Int, b: Int): Int = mapReduce(f, (x, y) => x * y, 1)(a, b)
-def factorialWithMapReduce(number: Int): Int = mapReduce(x => x, (x, y) => x * y, 1)(1, number)
-
-factorialCustom(7)
-factorialWithMapReduce(7)
