@@ -64,6 +64,9 @@ object HelperFunctions {
     }}
   }
 
+  /******************************************************
+   * Functional Programming Principles in Scala, week 1
+   */
   def sqrtCustom(x: Double) = {
     def isGoodEnough(guess: Double, x: Double) = abs(guess * guess - x)/x < 0.01
     def improve(guess: Double, x: Double) =(guess + x / guess) / 2
@@ -80,12 +83,9 @@ object HelperFunctions {
     def inner(number: Int, accumulated: Int): Int = {
       if(number == 0) accumulated else inner(number - 1, number * accumulated)
     }
-    inner(5, 1)
+    inner(number, 1)
   }
 
-  /******************************************************
-   * Functional Programming Principles in Scala, week 1
-   */
   def getNumberInPascalTrianglePosition(column: Int, row: Int): Int =
     if(column == 0 || column == row) 1
     else getNumberInPascalTrianglePosition(column - 1, row - 1) + getNumberInPascalTrianglePosition(column, row - 1)
@@ -129,6 +129,7 @@ object HelperFunctions {
   /*******************************************************
     * Functional Programming Principles in Scala, week 2
     */
+  /* AKA sum */
   def sumResultOfApplyingFunctionToNumbersFromAToB(f: Int => Int)(a: Int, b: Int): Int = {
     @tailrec
     def inner(a: Int, acc: Int): Int = {
@@ -138,10 +139,27 @@ object HelperFunctions {
     inner(a, 0)
   }
 
+  /* AKA product */
   def multiplyResultOfApplyingFunctionToNumbersFromAToB(f: Int => Int)(a: Int, b: Int): Int = {
     if(a > b) 1
     else f(a) * multiplyResultOfApplyingFunctionToNumbersFromAToB(f)(a + 1, b)
   }
 
   def factorialCustom2(number: Int): Int = multiplyResultOfApplyingFunctionToNumbersFromAToB(x => x)(1, number)
+
+  /*
+   * f: function to apply to each number
+   * combine: function with which combine the results of f
+   * zero: initial value for variable in mapReduce in which the result is going to be accumulated:
+   *       1 for product
+   *       0 for sum
+   */
+  def mapReduce(f: Int => Int, combine: (Int, Int) => Int, zero: Int)(a: Int, b: Int): Int = {
+    if(a > b) zero
+    else combine(f(a), mapReduce(f, combine, zero)(a + 1, b))
+  }
+
+  def productWithMapReduce(f: Int => Int)(a: Int, b: Int): Int = mapReduce(f, (x, y) => x * y, 1)(a, b)
+  def sumWithMapReduce(f: Int => Int)(a: Int, b: Int): Int = mapReduce(f, (x, y) => x + y, 0)(a, b)
+  def factorialWithMapReduce(number: Int): Int = mapReduce(x => x, (x, y) => x * y, 1)(1, number)
 }
