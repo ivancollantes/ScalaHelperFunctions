@@ -26,12 +26,16 @@ object HelperFunctions {
 
   def computeFactorial(number: Int): Int = (1 to number).product
 
-  // exponential function -> e^x = 1 + x + x^2/2! + x^3/3! + x^4/4! ...
+  /*
+   * exponential function -> e^x = 1 + x + x^2/2! + x^3/3! + x^4/4! ...
+   */
   def computeExponentialFunction(value: Double, terms: Int): Double =
     (1 to terms).foldLeft(1.0) { (result, term) => result + pow(value, term)/computeFactorial(term) }
 
-  // f(x) = a1*x^b1 + a2*x^b2 + ... + an*x^bn
-  // coefficientPair = (coefficient, index)
+  /*
+   * f(x) = a1*x^b1 + a2*x^b2 + ... + an*x^bn
+   * coefficientPair = (coefficient, index)
+   */
   def computeValueOfFunction(coefficients: List[Int], powers: List[Int], x: Double): Double = {
     coefficients.zipWithIndex.foldLeft(0.0) {
       (result: Double, coefficientPair: (Int, Int)) => result + coefficientPair._1*pow(x, powers(coefficientPair._2))
@@ -42,8 +46,10 @@ object HelperFunctions {
     Pi*pow(computeValueOfFunction(coefficients, powers, x), 2)
   }
 
-  // https://www.math.ucdavis.edu/~kouba/CalcTwoDIRECTORY/defintdirectory/
-  // to use with computeValueOfFunction or computeAreaOfCircleObtainedRotatingValueOfFunction as "func"
+  /*
+   * https://www.math.ucdavis.edu/~kouba/CalcTwoDIRECTORY/defintdirectory/
+   * to use with computeValueOfFunction or computeAreaOfCircleObtainedRotatingValueOfFunction as "func"
+   */
   def computeAreaUnderFunction(func: (List[Int], List[Int], Double)=>Double,
                                upperLimit: Int,
                                lowerLimit: Int,
@@ -71,26 +77,23 @@ object HelperFunctions {
 
   def factorialCustom(number: Int): Int = {
     @tailrec
-    def innerFactorial(number: Int, accumulated: Int): Int = {
-      if(number == 0) accumulated else innerFactorial(number - 1, number * accumulated)
+    def inner(number: Int, accumulated: Int): Int = {
+      if(number == 0) accumulated else inner(number - 1, number * accumulated)
     }
-    innerFactorial(5, 1)
+    inner(5, 1)
   }
 
-  /*
+  /******************************************************
    * Functional Programming Principles in Scala, week 1
    */
   def getNumberInPascalTrianglePosition(column: Int, row: Int): Int =
     if(column == 0 || column == row) 1
     else getNumberInPascalTrianglePosition(column - 1, row - 1) + getNumberInPascalTrianglePosition(column, row - 1)
 
-  /*
-   * Functional Programming Principles in Scala, week 1
-   */
   def isThereBracketBalance(chars: List[Char]): Boolean = {
 
     @tailrec
-    def innerIsThereBracketBalance(remainingChars: List[Char], accumulator: Int): Boolean = {
+    def inner(remainingChars: List[Char], accumulator: Int): Boolean = {
 
       def updateAccumulator(char: Char, accumulator: Int): Int =
         if(char == '(') accumulator + 1
@@ -103,25 +106,42 @@ object HelperFunctions {
 
       if(currentAccumulator < 0) false
       else if (remainingChars.tail.isEmpty) balance
-      else innerIsThereBracketBalance(remainingChars.tail, currentAccumulator )
+      else inner(remainingChars.tail, currentAccumulator )
     }
 
-    innerIsThereBracketBalance(chars, 0)
+    inner(chars, 0)
   }
 
-  /*
-   * Functional Programming Principles in Scala, week 1
-   */
   def getNumberOfWaysToGiveChange(money: Int, coins: List[Int]): Int = {
 
-    def innerGetNumberOfWaysToGiveChange(coins: List[Int], numberOfCoins: Int, money: Int): Int = {
+    def inner(coins: List[Int], numberOfCoins: Int, money: Int): Int = {
       if (money < 0) 0
       else if (money == 0) 1
       else if (numberOfCoins == 0) 0
-      else innerGetNumberOfWaysToGiveChange(coins, numberOfCoins - 1, money) +
-           innerGetNumberOfWaysToGiveChange(coins, numberOfCoins, money - coins(numberOfCoins-1))
+      else inner(coins, numberOfCoins - 1, money) +
+           inner(coins, numberOfCoins, money - coins(numberOfCoins-1))
     }
 
-    innerGetNumberOfWaysToGiveChange(coins, coins.length, money)
+    inner(coins, coins.length, money)
   }
+  /*******************************************************/
+
+  /*******************************************************
+    * Functional Programming Principles in Scala, week 2
+    */
+  def sumResultOfApplyingFunctionToNumbersFromAToB(f: Int => Int)(a: Int, b: Int): Int = {
+    @tailrec
+    def inner(a: Int, acc: Int): Int = {
+      if (a > b) acc
+      else inner(a + 1, acc + f(a))
+    }
+    inner(a, 0)
+  }
+
+  def multiplyResultOfApplyingFunctionToNumbersFromAToB(f: Int => Int)(a: Int, b: Int): Int = {
+    if(a > b) 1
+    else f(a) * multiplyResultOfApplyingFunctionToNumbersFromAToB(f)(a + 1, b)
+  }
+
+  def factorialCustom2(number: Int): Int = multiplyResultOfApplyingFunctionToNumbersFromAToB(x => x)(1, number)
 }
