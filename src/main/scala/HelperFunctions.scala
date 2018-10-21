@@ -90,7 +90,7 @@ object HelperFunctions {
     if(column == 0 || column == row) 1
     else getNumberInPascalTrianglePosition(column - 1, row - 1) + getNumberInPascalTrianglePosition(column, row - 1)
 
-  def isThereBracketBalance(chars: List[Char]): Boolean = {
+  def isThereParenthesisBalance(chars: List[Char]): Boolean = {
 
     @tailrec
     def inner(remainingChars: List[Char], accumulator: Int): Boolean = {
@@ -164,8 +164,8 @@ object HelperFunctions {
   def factorialWithMapReduce(x: Int): Int = mapReduce(x => x, (x, y) => x * y, 1)(1, x)
 
   def getFixedPointOfFunction(f: Double => Double)(firstGuess: Double): Double = {
-    val tolerance: Double = 0.001
-    def isCloseEnough(guess: Double, x: Double) = abs(guess * guess - x)/x < tolerance
+    val tolerance: Double = 0.0001
+    def isCloseEnough(x: Double, y: Double) = abs((x-y)/x)/x < tolerance
     @tailrec
     def inner(guess: Double): Double = {
       val next = f(guess)

@@ -2,9 +2,9 @@ import scala.annotation.tailrec
 import scala.math.abs
 
 def getFixedPointOfFunction(f: Double => Double)(firstGuess: Double): Double = {
-  val tolerance: Double = 0.001
+  val tolerance: Double = 0.0001
 
-  def isCloseEnough(guess: Double, x: Double) = abs(guess * guess - x) / x < tolerance
+  def isCloseEnough(x: Double, y: Double) = abs((x-y)/x)/x < tolerance
 
   @tailrec
   def inner(guess: Double): Double = {
@@ -18,8 +18,6 @@ def getFixedPointOfFunction(f: Double => Double)(firstGuess: Double): Double = {
 
 def averageDamp(f: Double => Double)(x: Double): Double = (x + f(x))/2
 
-getFixedPointOfFunction(x => 1 + x/2)(1)
+def sqrt(x: Double): Double = getFixedPointOfFunction(averageDamp(y => x/y))(1)
 
-def sqrt(x: Double): Double = {
-
-}
+sqrt(2)
