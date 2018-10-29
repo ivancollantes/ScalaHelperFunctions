@@ -174,4 +174,58 @@ object HelperFunctions {
     }
     inner(firstGuess)
   }
+
+
+  def lastCustom[T](xs: List[T]): T = xs match {
+    case List() => throw new Error("last of empty list")
+    case List(x) => x
+    case y :: ys => lastCustom(ys)
+  }
+
+  def initCustom[T](xs: List[T]): List[T] = xs match {
+    case List() => throw new Error("init of empty list")
+    case List(x) => List()
+    case y :: ys => y :: initCustom(ys)
+  }
+
+  def concatCustom[T](xs: List[T], ys: List[T]): List[T] = xs match {
+    case List() => ys
+    case z :: zs => z :: concatCustom(xs, zs)
+  }
+
+  def sortCustom[T](xs: List[T])(implicit order: Ordering[T]): List[T] = {
+    val n = xs.length / 2
+    if(n == 0) xs
+    else {
+      def mergeCustomWithPairs[T](xs: List[T], ys: List[T]): List[T] = (xs, ys) match {
+        case (Nil, ys) => ys
+        case (xs, Nil) => xs
+        case (x :: xst, y :: yst) =>
+          if(order.lt(x, y)) x :: mergeCustomWithPairs(xst, ys)
+          else y :: mergeCustomWithPairs(xs, yst)
+      }
+      val (fst, snd) = xs splitAt n
+      mergeCustomWithPairs(sortCustom(fst), sortCustom(snd))
+    }
+  }
+
+  def reverseCustom[T](xs: List[T]): List[T] = xs match {
+    case List() => xs
+    case y :: ys => reverseCustom(ys) ++ List(y)
+  }
+
+  def removeAtCustom[T](n: Int, xs: List[T]): List[T] = (xs take n) ++ (xs drop n + 1)
+
+  /* Takes a list of elements and packs them into a list of lists of equal elements */
+  def pack[T](xs: List[T]): List[List[T]] = xs match {
+    case Nil => Nil
+    case x :: xt => {
+      val (head: List[T], tail: List[T]) = xs.partition(_ == x)
+      head :: pack(tail)
+    }
+  }
+
+  /* Takes a list of elements and packs them into a list of pairs conformed by the element and the number of repetitions */
+  def encode[T](xs: List[T]): List[(T, Int)] = pack(xs) map (l => (l.head, l.length))
+
 }
