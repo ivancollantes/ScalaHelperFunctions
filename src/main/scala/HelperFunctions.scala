@@ -176,6 +176,11 @@ object HelperFunctions {
   }
 
 
+
+
+
+
+
   def lastCustom[T](xs: List[T]): T = xs match {
     case List() => throw new Error("last of empty list")
     case List(x) => x
@@ -228,4 +233,28 @@ object HelperFunctions {
   /* Takes a list of elements and packs them into a list of pairs conformed by the element and the number of repetitions */
   def encode[T](xs: List[T]): List[(T, Int)] = pack(xs) map (l => (l.head, l.length))
 
+  def scalarProduct(xs: Vector[Double], ys: Vector[Double]): Double = (xs zip ys).map{ case (x, y) => x * y }.sum
+  def scalarProduct2(xs: Vector[Double], ys: Vector[Double]): Double = (for((x,y) <- xs zip ys) yield x * y).sum
+
+  def isPrime(n: Int): Boolean = (2 until n).forall(d => n%d != 0)
+
+  def queens(n: Int): Set[List[Int]] = {
+    def isSafe(col: Int, queens: List[Int]): Boolean = {
+      val row = queens.length
+      val queensWithRow: Seq[(Int, Int)] = (row - 1 to 0 by -1) zip queens
+      queensWithRow forall {
+        case (r, c) => col != c && math.abs(col - c) != row - r
+      }
+    }
+    def placeQueens(k: Int): Set[List[Int]] = {
+      if(k == 0) Set(List())
+      else
+        for {
+          queens <- placeQueens(k - 1)
+          col <- 0 until n
+          if isSafe(col, queens)
+        } yield col :: queens
+    }
+    placeQueens(n)
+  }
 }
